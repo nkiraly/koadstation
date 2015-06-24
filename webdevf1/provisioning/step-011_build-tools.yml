@@ -1,6 +1,0 @@
----
-
-- name: webdevf1 Provisioning Step 011 - bootstrap tools
-  hosts: all
-  sudo: yes
-  roles: [bootstrap-tools]

@@ -3,7 +3,7 @@
 # ssh host of webserver to configure
 webserverhost=$1
 
-echo "webdevf1 Provisioning Step 011 - bootstrap tools"
+echo "webdevf1 Provisioning Step 111 - bootstrap tools"
 
 # stop on error
 set -e
@@ -17,4 +17,4 @@ ansible=`which ansible-playbook 2>/dev/null`
 $ansible \
   -i 'localhost,' \
   -c local \
-  provisioning/step-011_build-tools.yml
+  provisioning/step-111_build-tools.yml

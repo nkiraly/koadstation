@@ -34,6 +34,9 @@ Vagrant.configure('2') do |config|
       vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
       vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
     end
+
+    # provision step 010 - update pkg and ansible
+    freebsdweb.vm.provision 'shell', path: 'provisioning/step-010_pkg-ansible.sh', args: [WEBSERVER_IP], privileged: true
   end
 
   config.vm.define 'default' do |bootstrap|
@@ -55,17 +58,14 @@ Vagrant.configure('2') do |config|
       vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
     end
 
-    # provision step 010 - update yum and ansible
-    bootstrap.vm.provision 'shell', path: 'provisioning/step-010_yum-ansible.sh', args: [WEBSERVER_IP], privileged: false
+    # provision step 110 - update bootstrap yum and ansible
+    bootstrap.vm.provision 'shell', path: 'provisioning/step-110_yum-ansible.sh', args: [WEBSERVER_IP], privileged: true
 
-    # provision step 011 - install build tools
-    bootstrap.vm.provision 'shell', path: 'provisioning/step-011_build-tools.sh', args: [WEBSERVER_IP], privileged: false
+    # provision step 111 - install bootstrap build tools
+    bootstrap.vm.provision 'shell', path: 'provisioning/step-111_build-tools.sh', args: [WEBSERVER_IP], privileged: false
 
-    # provision step 020 - update pkg and ansible
-    bootstrap.vm.provision 'shell', path: 'provisioning/step-020_pkg-ansible.sh', args: [WEBSERVER_IP], privileged: false
-
-    # provision step 021 - web server packages and configuration
-    bootstrap.vm.provision 'shell', path: 'provisioning/step-021_servers.sh', args: [WEBSERVER_IP, WEBSERVER_HTTPS.to_s], privileged: false
+    # provision step 120 - freebsdweb server packages and configuration
+    bootstrap.vm.provision 'shell', path: 'provisioning/step-120_servers.sh', args: [WEBSERVER_IP, WEBSERVER_HTTPS.to_s], privileged: false
   end
 
 end

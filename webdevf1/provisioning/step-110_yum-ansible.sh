@@ -3,7 +3,7 @@
 # ssh host of webserver to configure
 webserverhost=$1
 
-echo "webdevf1 Provisioning Step 010 - boostrap - yum update and ansible"
+echo "webdevf1 Provisioning Step 110 - boostrap - yum update and ansible"
 
 ansible=`which ansible-playbook 2>/dev/null`
 

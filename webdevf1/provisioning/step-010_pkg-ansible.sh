@@ -3,7 +3,7 @@
 # ssh host of webserver to configure
 webserverhost=$1
 
-echo "webdevf1 Provisioning Step 020 - freebsdweb - pkg update and ansible"
+echo "webdevf1 Provisioning Step 010 - freebsdweb - pkg update and ansible"
 
 ansible=`which ansible-playbook 2>/dev/null`
 

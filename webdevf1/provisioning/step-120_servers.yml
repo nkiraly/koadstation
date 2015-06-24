@@ -1,0 +1,7 @@
+---
+
+- name: webdevf1 Provisioning Step 120 - webserver server provisioning
+  hosts: all
+  gather_facts: no
+  sudo: yes
+  roles: [apache24]
