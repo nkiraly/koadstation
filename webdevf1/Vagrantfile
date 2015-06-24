@@ -1,0 +1,63 @@
+require 'rbconfig'
+
+is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+
+Vagrant.configure('2') do |config|
+
+  config.vm.define 'default' do |bootstrap|
+    deployment.vm.box = 'chef/centos-6.6'
+
+    bootstrap.vm.network 'private_network', ip: '10.0.4.10'
+
+    bootstrap.vm.network 'forwarded_port', guest: 22, host: 4022, id: 'ssh'
+
+    # set dir and file modes to minimize ansible confusion
+    deployment.vm.synced_folder '.', '/vagrant', :mount_options => ["dmode=777","fmode=666"]
+
+    bootstrap.vm.provider 'virtualbox' do |vb|
+      # vb.gui = true
+      vb.memory = 512
+      vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+    end
+
+    # provision step 001
+    # update and configure pkg
+    bootstrap.vm.provision 'shell', path: 'provisioning/bootstrap-010_pkg-ansible.sh', args: [MACHINE_IP], privileged: false
+  end
+
+  config.vm.define 'webserver' do |freebsdweb|
+    freebsdweb.vm.box = 'arkadi/freebsd-10.1-amd64'
+    freebsdweb.vm.guest = :freebsd
+
+    freebsdweb.vm.network 'private_network', ip: '10.0.4.50'
+
+    freebsdweb.vm.network 'forwarded_port', guest: 22, host: 5022, id: 'ssh'
+    freebsdweb.vm.network 'forwarded_port', guest: 80, host: 5080
+    freebsdweb.vm.network 'forwarded_port', guest: 443, host: 5443
+
+    # disable default share for now, need to work on windows to freebsd virtualbox sharing
+    freebsdweb.vm.synced_folder '.', '/vagrant', disabled: true
+
+    freebsdweb.vm.provider 'virtualbox' do |vb|
+      # vb.gui = true
+      vb.memory = 512
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+      vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+    end
+
+    # provision step 010
+    # update pkg and ansible
+    freebsdweb.vm.provision 'shell', path: 'provisioning/freebsdweb-010_pkg-ansible.sh', args: [MACHINE_IP], privileged: false
+
+    # provision step 020
+    # install server packages and configuration
+    freebsdweb.vm.provision 'shell', path: 'provisioning/freebsdweb-020_servers.sh', args: [MACHINE_IP], privileged: false
+  end
+
+end

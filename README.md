@@ -4,4 +4,4 @@ koadstation is a collection of development environments, stable servers, and fra
 
 # stations
 
-1. web-dev_freebsd-10.1 - FreeBSD 10.1 web development environment
+1. webdevf1 - FreeBSD 10.1 web development environment
