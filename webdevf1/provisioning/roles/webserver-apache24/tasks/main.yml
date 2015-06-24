@@ -1,0 +1,6 @@
+---
+
+## webdevf1 webserver configuration
+
+- name: Install Apache Webserver 2.4
+  pkgng: name=www/apache24 state=present

@@ -10,6 +10,7 @@ set -e
 # if ansible was not found, install it before continuing
 if [[ -z $ansible ]]; then
   pkg upgrade --yes
+  pkg install --yes lang/python
   pkg install --yes sysutils/ansible
   ansible=`which ansible-playbook 2>/dev/null`
 fi

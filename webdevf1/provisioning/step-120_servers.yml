@@ -4,4 +4,4 @@
   hosts: all
   gather_facts: no
   sudo: yes
-  roles: [apache24]
+  roles: [webserver-apache24]

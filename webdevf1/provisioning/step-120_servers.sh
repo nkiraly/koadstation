@@ -16,11 +16,16 @@ cd /vagrant
 ansible=`which ansible-playbook 2>/dev/null`
 
 # provision the webserver server packages and configuration
-$ansible \
-  -i '$webserverhost,' \
+# important notes:
+# - use the config shipped by Vagrant file file provisioner
+# - specify the ansible_python_interpreter because ansible assumes it is the same as the ansible control host
+ANSIBLE_CONFIG=/vagrant/provisioning/ansible.cfg $ansible \
+  -i "$webserverhost," \
   --private-key $HOME/vagrant_insecure_private_key \
   provisioning/step-120_servers.yml \
-  -e "ENV=local
+  -e "ansible_python_interpreter=/usr/local/bin/python
+      ENV=local
       webdevf1_https_ip=$webserverhost
       webdevf1_https_port=$webserverhttps
-  "
+  " \
+  -v
