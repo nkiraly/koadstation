@@ -1,0 +1,9 @@
+---
+
+## webdevf1 bootstrap tooling
+
+- name: Install build tools
+  yum: name=wget,unzip,zip,python,libselinux-python,git state=present
+
+- name: Install java build tools
+  yum: name=ant,ant-contrib,ant-nodeps,ant-junit,java-1.7.0-openjdk,java-1.7.0-openjdk-devel state=present
