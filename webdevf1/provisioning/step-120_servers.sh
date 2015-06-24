@@ -15,7 +15,12 @@ cd /vagrant
 # ansible should have been confirmed in bootstrap step 010
 ansible=`which ansible-playbook 2>/dev/null`
 
-# provision the webserver with ansible
+# provision the webserver server packages and configuration
 $ansible \
   -i '$webserverhost,' \
-  provisioning/step-120_servers.yml
+  --private-key $HOME/vagrant_insecure_private_key \
+  provisioning/step-120_servers.yml \
+  -e "ENV=local
+      webdevf1_https_ip=$webserverhost
+      webdevf1_https_port=$webserverhttps
+  "
