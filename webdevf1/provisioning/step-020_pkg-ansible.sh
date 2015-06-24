@@ -5,10 +5,10 @@ webserverhost=$1
 
 echo "webdevf1 Provisioning Step 020 - freebsdweb - pkg update and ansible"
 
+ansible=`which ansible-playbook 2>/dev/null`
+
 # stop on error
 set -e
-
-ansible=`which ansible-playbook 2>/dev/null`
 
 # if ansible was not found, install it before continuing
 if [[ -z $ansible ]]; then

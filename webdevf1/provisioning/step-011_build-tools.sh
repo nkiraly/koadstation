@@ -10,11 +10,11 @@ set -e
 
 cd /vagrant
 
-# ansible should have been confirmed in boostrap step 010
+# ansible should have been confirmed in bootstrap step 010
 ansible=`which ansible-playbook 2>/dev/null`
 
 # provision this bootstrap VM build tools
 $ansible \
   -i 'localhost,' \
   -c local \
-  provisioning/bootstrap-011_build-tools.yml
+  provisioning/step-011_build-tools.yml
