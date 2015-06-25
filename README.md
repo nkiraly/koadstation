@@ -11,7 +11,7 @@ koadstation is a collection of development environments, and servers that I use 
 
 Q: Is windows supported as a vagrant host?
 
-A: Thee stations target both linux and windows as vagrant hosts, with the virtualbox provider.
+A: These stations target both linux and windows as vagrant hosts, with the virtualbox provider.
 
 
 Q: What is the recommended way of running these stations on windows?
