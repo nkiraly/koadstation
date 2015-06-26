@@ -1,0 +1,84 @@
+#
+# Prepare sysctl settings and a better-tuned Postgresql, based on
+# Frederik Ramm's 2010 "Optimizing" SOTM talk:
+# http://www.geofabrik.de/media/2010-07-10-rendering-toolchain-performance.pdf
+#
+# Also, move the data dir to ephemeral storage where there's more space.
+#
+
+- name: Report setup status to file
+  shell: date +'%a %b %d %H:%M:%S %Z %Y Preparing database (maptile-database)' >> /usr/local/tiledrawer/progress/status.txt
+  
+- name: Install server component packages
+  apt: name={{item}} state=present
+  with_items:
+    - postgresql-9.3-postgis-2.1
+
+- name: Move /var/lib/var/lib/postgresql/9.3/main to /mnt ephemeral storage
+  command: mv /var/lib/postgresql/9.3/main /mnt/var-lib-postgres-9.3-main creates=/mnt/var-lib-postgres-9.3-main
+
+- name: Link /mnt/var-lib-postgres-9.3-main to /var/lib/var/lib/postgresql/9.3/main
+  file: src=/mnt/var-lib-postgres-9.3-main dest=/var/lib/postgresql/9.3/main owner=postgres group=postgres state=link
+
+- name: Install postgresql.conf
+  copy: src=postgresql/postgresql.conf dest=/etc/postgresql/9.3/main/postgresql.conf owner=postgres group=postgres
+  
+- name: Install pg_hba.conf
+  copy: src=postgresql/pg_hba.conf dest=/etc/postgresql/9.3/main/pg_hba.conf owner=postgres group=postgres
+
+- name: Generate Server SSL Key
+  # generate a new key and remove the passphrase
+  command: >
+    openssl genrsa -out server.key 1024 && openssl rsa -in server.key -out server.key
+    chdir=/var/lib/postgresql/9.3/main
+    creates=/var/lib/postgresql/9.3/main/server.key
+
+- name: Enforce Server SSL Key permissions
+  file: >
+    dest=/var/lib/postgresql/9.3/main/server.key
+    mode=0400
+    owner=postgres
+    group=postgres
+
+- name: Generate Server SSL Certificate
+  shell: >
+    openssl req -new -key server.key -days 3650 -out server.crt -x509 -subj '/C=US/ST=Pennsylvania/L=Pittsburgh/O=koadWeb.net/CN=koadweb.net/emailAddress=ops@koadweb.net'
+    chdir=/var/lib/postgresql/9.3/main
+    creates=/var/lib/postgresql/9.3/main/server.crt
+    
+- name: Set Server SSL Certificate as root certificate
+  # since we want a self signed certificate, we use the server certificate as root certificate
+  command: >
+    cp server.crt root.crt
+    chdir=/var/lib/postgresql/9.3/main
+    creates=/var/lib/postgresql/9.3/main/root.key
+
+- name: Restart postgresql
+  service: name=postgresql state=restarted
+
+#
+# Build ourselves a usable OSM planet database.
+#
+- name: Create osm user
+  postgresql_user: name=osm password=secret role_attr_flags=LOGIN
+  
+- name: Create planet_osm database
+  postgresql_db: name=planet_osm
+                 owner=osm
+                 encoding='UTF-8'
+                 template='template0'
+
+- name: Install postgis extension in planet_osm database
+  postgresql_ext: name=postgis db=planet_osm
+
+## do we need this stuff in postgis 2.1 ?
+#psql -U postgres planet_osm < /usr/share/postgresql/9.3/contrib/postgis-2.1/spatial_ref_sys.sql
+# use imposm definition of srid 900913
+#psql -U postgres planet_osm -c "DELETE FROM spatial_ref_sys WHERE srid = 900913"
+#psql -U postgres planet_osm < /usr/local/lib/python2.7/dist-packages/imposm/900913.sql
+
+- name: Set ownership of spatial tables to osm
+  command: psql -U postgres planet_osm -c 'ALTER TABLE {{ item }} OWNER TO osm;'
+  with_items:
+    - geometry_columns
+    - spatial_ref_sys

@@ -1,0 +1,113 @@
+---
+
+# tiledraweru14 maptile server components
+
+- name: Create TileDrawer base dir
+  file: path=/usr/local/tiledrawer state=directory mode=0755 owner=root group=root
+  
+- name: Create tiledrawer.log
+  command: touch /var/log/tiledrawer.log creates=/var/log/tiledrawer.log
+
+- name: Link /mnt to /usr/local/tiledrawer/progress
+  file: src=/mnt dest=/usr/local/tiledrawer/progress owner=root group=root state=link
+
+- name: Link /var/log/tiledrawer.log to /usr/local/tiledrawer/progress
+  file: src=/var/log/tiledrawer.log dest=/usr/local/tiledrawer/progress/tiledrawer.log owner=root group=root state=link
+  
+- name: Report setup status to file
+  shell: date +'%a %b %d %H:%M:%S %Z %Y Installing software (maptile-server-components)' >> /usr/local/tiledrawer/progress/status.txt
+  
+- name: Set sysctl settings
+# set sysctls from https://github.com/nkiraly/Tile-Drawer ubuntu/sysctl.sh with ansible sysctl module and set to persist
+  sysctl: name="{{ item.name }}" value="{{ item.value }}" sysctl_set=yes state=present reload=yes
+  with_items:
+    - { name: 'kernel.panic', value: '1' }
+    - { name: 'kernel.shmmax', value: '2147483648' }
+    - { name: 'net.ipv4.conf.eth0.rp_filter', value: '0' }
+    - { name: 'net.ipv4.tcp_fin_timeout', value: '30' }
+    - { name: 'net.ipv4.tcp_retrans_collapse', value: '0' }
+    - { name: 'net.ipv4.tcp_syncookies', value: '1' }
+    - { name: 'net.ipv4.tcp_tw_recycle', value: '1' }
+    - { name: 'vm.overcommit_ratio', value: '90' }
+    - { name: 'vm.overcommit_memory', value: '2' }
+    - { name: 'kernel.core_uses_pid', value: '1' }
+    - { name: 'net.core.rmem_max', value: '16777216' }
+    - { name: 'net.core.wmem_max', value: '16777216' }
+    - { name: 'net.ipv4.tcp_rmem', value: '4096 87380 16777216' }
+    - { name: 'net.ipv4.tcp_wmem', value: '4096 65536 16777216' }
+    - { name: 'net.ipv4.tcp_timestamps', value: '0' }
+    - { name: 'net.core.netdev_max_backlog', value: '2500' }
+
+- name: Install python-software-properties
+  apt: name=python-software-properties state=present
+
+- name: Add apt ppa:mapnik repository
+  command: add-apt-repository -y ppa:mapnik/v2.2.0
+
+- name: Install python-setuptools
+  apt: name=python-setuptools state=present
+
+- name: Install nginx
+  apt: name=nginx state=present
+
+- name: Enable setup nginx config
+  copy: src=nginx/setup-time.conf dest=/etc/nginx/sites-enabled/setup-time.conf owner=root group=root
+
+- name: Install setup status html
+  copy: src=nginx/status.html dest=/usr/local/tiledrawer/progress/index.html owner=root group=root
+
+- name: Restart nginx
+  service: name=nginx state=restarted
+
+- name: Install dependency and intermediate packages
+  apt: name={{item}} state=present
+  with_items:
+    - zip
+    - unzip
+    - gdal-bin
+    - python-mapnik
+    - python-pip
+    - python-imaging
+    - python-gevent
+    - python-memcache
+    - osm2pgsql
+    - openjdk-6-jre-headless
+    - protobuf-compiler
+    - libprotobuf-dev
+    - libtokyocabinet-dev
+    - libgeos-c1
+    - libgeos-dev
+    - python-dev
+    - python-psycopg2
+    - python-cssutils
+    - build-essential
+
+- name: Install server component packages
+  apt: name={{item}} state=present
+  with_items:
+    - gunicorn
+    - memcached
+
+- name: Install python dependencies
+  command: pip install TileStache ModestMaps Cascadenik shapely imposm.parser imposm
+
+# Install osmosis-0.44.1
+# use the most recent osmosis release from http://bretth.dev.openstreetmap.org/osmosis-build/
+
+- name: Osmosis manual setup - Create /usr/local/osmosis-0.44.1
+  file: path=/usr/local/osmosis-0.44.1 state=directory mode=0755 owner=root group=root
+
+- name: Osmosis manual setup - Download osmosis-0.44.1.tgz
+  get_url: url=http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-0.44.1.tgz dest=/home/vagrant/ mode=0440
+
+- name: Osmosis manual setup - Unarchive osmosis-0.44.1.tgz
+  unarchive: src=/home/vagrant/osmosis-0.44.1.tgz dest=/usr/local/osmosis-0.44.1 copy=no
+
+- name: Osmosis manual setup - Link to /usr/bin/osmosis
+  file: src=/usr/local/osmosis-0.44.1/bin/osmosis dest=/usr/bin/osmosis owner=root group=root state=link
+
+- name: Install memcached.conf
+  file: src=memcached/memcached.conf dest=/etc/memcached.conf owner=root group=root
+
+- name: Restart memcached
+  service: name=memcached state=restarted

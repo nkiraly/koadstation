@@ -1,0 +1,7 @@
+---
+
+- name: tiledraweru14 Provisioning Step 030 - build map tile database
+  hosts: all
+  gather_facts: no
+  sudo: yes
+  roles: [maptile-database]

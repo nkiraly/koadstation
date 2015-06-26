@@ -1,0 +1,7 @@
+---
+
+- name: tiledraweru14 Provisioning Step 020 - server components
+  hosts: all
+  gather_facts: no
+  sudo: yes
+  roles: [maptile-server-components]
