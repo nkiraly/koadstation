@@ -50,8 +50,11 @@
 - name: Install nginx
   apt: name=nginx state=present
 
+- name: Install nginx configs
+  copy: src=nginx dest=/usr/local/tiledrawer owner=root group=root
+  
 - name: Enable setup nginx config
-  copy: src=nginx/setup-time.conf dest=/etc/nginx/sites-enabled/setup-time.conf owner=root group=root
+  file: src=/usr/local/tiledrawer/nginx/setup-time.conf dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644 state=link
 
 - name: Install setup status html
   copy: src=nginx/status.html dest=/usr/local/tiledrawer/progress/index.html owner=root group=root

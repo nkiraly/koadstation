@@ -1,4 +1,5 @@
-#
+---
+
 # Prepare sysctl settings and a better-tuned Postgresql, based on
 # Frederik Ramm's 2010 "Optimizing" SOTM talk:
 # http://www.geofabrik.de/media/2010-07-10-rendering-toolchain-performance.pdf
@@ -71,11 +72,16 @@
 - name: Install postgis extension in planet_osm database
   postgresql_ext: name=postgis db=planet_osm
 
-## do we need this stuff in postgis 2.1 ?
-#psql -U postgres planet_osm < /usr/share/postgresql/9.3/contrib/postgis-2.1/spatial_ref_sys.sql
+# osm and ogr tools depend on spatial_ref_sys to EPSG file processing
+- name: Load spatial_ref_sys extras
+  command: psql -U postgres planet_osm -f /usr/share/postgresql/9.3/contrib/postgis-2.1/spatial_ref_sys.sql
+
 # use imposm definition of srid 900913
-#psql -U postgres planet_osm -c "DELETE FROM spatial_ref_sys WHERE srid = 900913"
-#psql -U postgres planet_osm < /usr/local/lib/python2.7/dist-packages/imposm/900913.sql
+- name: Delete srid 900913 to replace with imposm's version
+  command: psql -U postgres planet_osm -c "DELETE FROM spatial_ref_sys WHERE srid = 900913"
+
+- name: Load imposm srid 900913
+  command: psql -U postgres planet_osm -f /usr/local/lib/python2.7/dist-packages/imposm/900913.sql
 
 - name: Set ownership of spatial tables to osm
   command: psql -U postgres planet_osm -c 'ALTER TABLE {{ item }} OWNER TO osm;'

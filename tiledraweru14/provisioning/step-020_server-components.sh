@@ -14,4 +14,5 @@ ansible=`which ansible-playbook 2>/dev/null`
 $ansible \
   -i 'localhost,' \
   -c local \
-  provisioning/step-020_server-components.yml
+  provisioning/step-020_server-components.yml \
+  -v

@@ -1,0 +1,7 @@
+---
+
+- name: tiledraweru14 Provisioning Step 040 - install import tools
+  hosts: all
+  gather_facts: no
+  sudo: yes
+  roles: [maptile-import-tools]

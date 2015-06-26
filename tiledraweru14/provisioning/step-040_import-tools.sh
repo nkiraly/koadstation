@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "tiledraweru14 Provisioning Step 030 - build map tile database"
+echo "tiledraweru14 Provisioning Step 040 - install import tools"
 
 # stop on error
 set -e
@@ -14,5 +14,5 @@ ansible=`which ansible-playbook 2>/dev/null`
 $ansible \
   -i 'localhost,' \
   -c local \
-  provisioning/step-030_build-database.yml \
+  provisioning/step-040_import-tools.yml \
   -v

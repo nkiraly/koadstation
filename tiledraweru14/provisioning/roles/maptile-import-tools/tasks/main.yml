@@ -1,0 +1,16 @@
+---
+
+- name: Install database population python script
+  copy: src=populate.py dest=/usr/local/tiledrawer owner=root group=root mode=0744
+
+- name: Install postgres null seed data
+  copy: src=postgres dest=/usr/local/tiledrawer owner=root group=root mode=0644
+
+- name: Install osm2pgsql styles
+  copy: src=osm2pgsql dest=/usr/local/tiledrawer owner=root group=root mode=0644
+
+- name: Install gunicorn config
+  copy: src=gunicorn dest=/usr/local/tiledrawer owner=root group=root mode=0644
+
+- name: Install tile server activation script
+  copy: src=draw.sh dest=/usr/local/tiledrawer owner=root group=root mode=0744
