@@ -89,4 +89,4 @@
 #ERROR:  function astext(geometry) does not exist
 #LINE 2:                 (SELECT *, y(astext(way)) AS latitude
 # during cascadenik.load_map()
-  command: psql -U postgres planet_osm -f /usr/share/postgresql/9.3/contrib/postgis-2.1/legacy
+  command: psql -U postgres planet_osm -f /usr/share/postgresql/9.3/contrib/postgis-2.1/legacy.sql
