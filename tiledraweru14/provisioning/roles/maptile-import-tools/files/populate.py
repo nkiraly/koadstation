@@ -461,7 +461,9 @@ def update_status(message):
     """
     """
     status_file = open('/usr/local/tiledrawer/progress/status.txt', 'a')
-    print >> status_file, strftime('%a %b %d %H:%M:%S %Z %Y'), message
+    status_ts = strftime('%a %b %d %H:%M:%S %Z %Y')
+    print "%s %s" % ( status_ts, message )
+    print >> status_file, status_ts, message
 
 if __name__ == '__main__':
     
