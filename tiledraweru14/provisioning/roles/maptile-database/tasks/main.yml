@@ -73,14 +73,8 @@
   postgresql_ext: name=postgis db=planet_osm
 
 - name: Load spatial_ref_sys extras
-# osm and ogr tools depend on spatial_ref_sys to EPSG file processing is all in WGS84 Web Mercator
-#
-# planet data is in spatial reference system 900913
-#
-# Google Spherical Mercator definition
-#<900913> +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs <>
-
-# official number for sm is EPSG:3857
+# osm and ogr tools depend on spatial_ref_sys for file processing in EPSG:3857 WGS84 Web Mercator projection system
+# for a while this was known as 900913
 # http://lists.osgeo.org/pipermail/gdal-dev/2009-November/022672.html
   command: psql -U postgres planet_osm -f /usr/share/postgresql/9.3/contrib/postgis-2.1/spatial_ref_sys.sql
 
