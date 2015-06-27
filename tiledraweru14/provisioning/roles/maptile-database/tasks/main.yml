@@ -84,15 +84,6 @@
 # http://lists.osgeo.org/pipermail/gdal-dev/2009-November/022672.html
   command: psql -U postgres planet_osm -f /usr/share/postgresql/9.3/contrib/postgis-2.1/spatial_ref_sys.sql
 
-
-
-# use imposm definition of srid 900913
-- name: Delete srid 900913 to replace with imposm's version
-  command: psql -U postgres planet_osm -c "DELETE FROM spatial_ref_sys WHERE srid = 900913"
-
-- name: Load imposm srid 900913
-  command: psql -U postgres planet_osm -f /usr/local/lib/python2.7/dist-packages/imposm/900913.sql
-
 - name: Set ownership of spatial tables to osm
   command: psql -U postgres planet_osm -c 'ALTER TABLE {{ item }} OWNER TO osm;'
   with_items:
