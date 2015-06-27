@@ -12,6 +12,7 @@ from StringIO import StringIO
 from zipfile import ZipFile
 from urllib import urlopen
 from time import strftime
+import sys, traceback
 import json
 
 import cascadenik
@@ -491,8 +492,9 @@ if __name__ == '__main__':
         coast_filename = download_coastline()
         import_coastline(coast_filename, options.bbox)
         
-    except:
-        update_status('Something went wrong, sorry (populate.py)')
+    except Exception as ex:
+        update_status("populate.py exception: %s" % ex)
+        traceback.print_exc(file=sys.stdout)
         exit(1)
     
     else:
