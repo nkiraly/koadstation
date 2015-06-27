@@ -49,7 +49,7 @@ def download_file(url):
     curl.wait()
     
     if curl.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('curl command returned %d' % curl.returncode)
     
     return filename
 
@@ -79,10 +79,10 @@ def combine_extracts(bbox, files):
     bzout.wait()
     
     if osmosis.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('osmosis command returned %d' % osmosis.returncode)
     
     if bzout.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('bzout command returned %d' % bzout.returncode)
     
     return filename
 
@@ -98,7 +98,7 @@ def import_extract_osm2pgsql(filename):
     psql.wait()
     
     if psql.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('psql command returned %d' % psql.returncode)
     
     # Import new OSM data
     
@@ -114,7 +114,7 @@ def import_extract_osm2pgsql(filename):
     osm2pgsql.wait()
     
     if osm2pgsql.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('osm2pgsql command returned %d' % osm2pgsql.returncode)
     
     # Apply new High Road views
     
@@ -126,7 +126,7 @@ def import_extract_osm2pgsql(filename):
     psql.wait()
     
     if psql.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('psql command returned %d' % psql.returncode)
     
 def import_extract_imposm(filename):
     """ Shell out to imposm to import extract file to Postgis.
@@ -143,7 +143,7 @@ def import_extract_imposm(filename):
     imposm.wait()
     
     if imposm.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('imposm command returned %d' % imposm.returncode)
 
 def download_coastline():
     """ Download and unpack an unprojected "good" coastline from metro.teczno.com.
@@ -161,13 +161,13 @@ def download_coastline():
     tar.wait()
     
     if curl.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('curl command returned %d' % curl.returncode)
     
     if bzcat.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('bzcat command returned %d' % bzcat.returncode)
     
     if tar.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('tar command returned %d' % tar.returncode)
     
     return 'progress/coastline-good.shp'
 
@@ -193,7 +193,7 @@ def import_coastline(filename, bbox=None):
     ogr2ogr.wait()
     
     if ogr2ogr.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('ogr2ogr command returned %d' % ogr2ogr.returncode)
     
     shp2pgsql = 'shp2pgsql', '-dID', '-s', '3857', extract_filename, 'coastline'
     psql = 'psql -U osm planet_osm'.split()
@@ -207,10 +207,10 @@ def import_coastline(filename, bbox=None):
     psql.wait()
     
     if shp2pgsql.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('shp2pgsql command returned %d' % shp2pgsql.returncode)
     
     if psql.returncode:
-        raise Exception('wuh-woh')
+        raise Exception('psql command returned %d' % psql.returncode)
 
 def import_style(url):
     """
