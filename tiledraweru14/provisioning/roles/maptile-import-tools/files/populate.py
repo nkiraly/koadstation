@@ -22,7 +22,7 @@ epsg3857 = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_
 
 parser = OptionParser(usage="""%prog [options] [url...]""")
 
-defaults = dict(style='https://raw.github.com/migurski/OSM-Solar/tiledrawer/tiledrawer.cfg',
+defaults = dict(style='https://raw.github.com/nkiraly/OSM-Solar/tiledrawer/tiledrawer.cfg',
                 bbox=(37.777, -122.352, 37.839, -122.226))
 
 parser.set_defaults(**defaults)
@@ -118,7 +118,7 @@ def import_extract_osm2pgsql(filename):
     
     # Apply new High Road views
     
-    highroad_sql = urlopen('https://raw.github.com/migurski/HighRoad/master/high_road_views-setup.pgsql').read()
+    highroad_sql = urlopen('https://raw.github.com/nkiraly/HighRoad/master/high_road_views-setup.pgsql').read()
     
     psql = Popen('psql -U osm planet_osm'.split(), stdin=PIPE, stderr=PIPE, stdout=PIPE)
     psql.stdin.write(highroad_sql)
