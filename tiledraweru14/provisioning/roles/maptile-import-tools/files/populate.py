@@ -17,7 +17,7 @@ import json
 import cascadenik
 import mapnik
 
-epsg900913 = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null'
+epsg3857 = '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null'
 
 parser = OptionParser(usage="""%prog [options] [url...]""")
 
@@ -178,7 +178,7 @@ def import_coastline(filename, bbox=None):
     handle, extract_filename = mkstemp(dir='progress', prefix='coastline-', suffix='.shp')
     remove(extract_filename)
     
-    ogr2ogr = 'ogr2ogr -t_srs EPSG:900913'.split()
+    ogr2ogr = 'ogr2ogr -t_srs EPSG:3857'.split()
     
     if bbox is not None:
         ogr2ogr += ['-spat']
@@ -194,7 +194,7 @@ def import_coastline(filename, bbox=None):
     if ogr2ogr.returncode:
         raise Exception('wuh-woh')
     
-    shp2pgsql = 'shp2pgsql', '-dID', '-s', '900913', extract_filename, 'coastline'
+    shp2pgsql = 'shp2pgsql', '-dID', '-s', '3857', extract_filename, 'coastline'
     psql = 'psql -U osm planet_osm'.split()
     
     print >> stderr, '+', ' '.join(shp2pgsql), '|', ' '.join(psql)
@@ -394,7 +394,7 @@ def import_style_tdcfg(url):
     # Create a local style.xml file by way of a dummy mapnik.Map instance.
     
     mmap = mapnik.Map(1, 1)
-    mmap.srs = epsg900913
+    mmap.srs = epsg3857
     cascadenik.load_map(mmap, mapfile, 'gunicorn', verbose=False)
     mapnik.save_map(mmap, 'gunicorn/style.xml')
     
@@ -436,7 +436,7 @@ def import_style_mml(url):
     # Create a local style.xml file by way of a dummy mapnik.Map instance.
     
     mmap = mapnik.Map(1, 1)
-    mmap.srs = epsg900913
+    mmap.srs = epsg3857
     cascadenik.load_map(mmap, url, 'gunicorn', verbose=False)
     mapnik.save_map(mmap, 'gunicorn/style.xml')
     
