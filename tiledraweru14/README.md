@@ -31,7 +31,41 @@ If you need to rebuild maps after changing the configuration, comment out provis
 $ vagrant provision
 ```
 
-2) Import desired map data
+2) Add /mnt storage space
+TODO: Update path usage
+The https://github.com/nkiraly/Tile-Drawer script based provisioning assumed you are building the map tile server on an AWS machine with ephemeral storage on /mnt
+To mock this with the virtualbox provider, add a drive to the VM with approximately 100x storage of the size of all of the PBF you are importing. Meaning if you are importing us-northeast-latest.osm-QOjmdL.pbf with is ~ 622MM then your /mnt drive should be 62GB.
+
+To add the drive in ubuntu you would initialize the filesystem and add it to fstab like this:
+
+```bash
+$ vagrant ssh
+
+# sudo fdisk -u /dev/sdb <<EOF
+p
+n
+p
+1
+
+
+t
+8e
+w
+p
+EOF
+
+# sudo fdisk -l /dev/sdb
+
+# sudo mkfs -t ext4 /dev/sdb1
+
+# sudo vi /etc/fstab
+/dev/sdb1    /mnt   ext4    defaults     0        2
+
+# sudo mount /mnt
+```
+
+
+3) Import desired map data
 
 This example does all of the areas of the US and will take significant resources and time to import. To do a smaller set to test, try using just us-northeast or whatever state or region is local to you. For more pbf bundles, see http://download.geofabrik.de/north-america.html
 
@@ -46,11 +80,15 @@ $ vagrant ssh
   http://download.geofabrik.de/north-america/us-south-latest.osm.pbf  \
   http://download.geofabrik.de/north-america/us-west-latest.osm.pbf
 
-3) Finalize config to serve tiles and slippymap from the HTTP root
+4) Finalize config to serve tiles and slippymap from the HTTP root
 
 ```bash
 $ vagrant ssh
 
-# sudo /usr/local/tiledrawer/draw.sh
+# sudo sh /usr/local/tiledrawer/draw.sh
 
 ```
+
+# References
+- Discussion on resizing vagrant box vmdk https://github.com/mitchellh/vagrant/issues/2339
+- Blog on resizing a vagrant vmdk http://blog.lenss.nl/2012/09/resize-a-vagrant-vmdk-drive/

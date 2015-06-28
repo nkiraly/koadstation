@@ -1,6 +1,6 @@
 ---
 
-- name: tiledraweru14 Provisioning Step 030 - build map tile database
+- name: tiledraweru14 Provisioning Step 030 - build planet database
   hosts: all
   gather_facts: no
   sudo: yes
