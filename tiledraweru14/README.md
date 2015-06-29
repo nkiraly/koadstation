@@ -89,6 +89,8 @@ $ vagrant ssh
 
 ```
 
+If you are using the default Vagrantfile configuration in this repo, now you can browse the map served at http://10.0.3.10/ from the machine hosting the VM.
+
 # References
 - Discussion on resizing vagrant box vmdk https://github.com/mitchellh/vagrant/issues/2339
 - Blog on resizing a vagrant vmdk http://blog.lenss.nl/2012/09/resize-a-vagrant-vmdk-drive/
