@@ -1,0 +1,19 @@
+---
+
+- name: webdevj1 Provisioning Step 210 - jailhost jails configuration
+  hosts: all
+  gather_facts: no
+  sudo: yes
+
+  vars_files:
+    - jails.yml
+
+  roles:
+    - role: jailhost
+
+
+- name: provision webserver jails
+  hosts: webserverjails
+  sudo: yes
+  gather_facts: False
+  roles: [webserver-apache24]

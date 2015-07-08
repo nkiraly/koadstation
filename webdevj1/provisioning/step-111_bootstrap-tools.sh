@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "webdevf1 Provisioning Step 111 - bootstrap tools"
+echo "webdevj1 Provisioning Step 111 - bootstrap tools"
 
 # stop on error
 set -e
@@ -14,7 +14,7 @@ ansible=`which ansible-playbook 2>/dev/null`
 $ansible \
   -i 'localhost,' \
   -c local \
-  provisioning/step-111_build-tools.yml
+  provisioning/step-111_bootstrap-tools.yml
 
 # make sure vagrant_insecure_private_key file is not world readable
 # if the bootstrap VM shared folder comes from a windows vagrant host

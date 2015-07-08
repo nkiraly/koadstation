@@ -1,0 +1,72 @@
+---
+# webdevj1 setup jailhost and configure defined $jails
+# steps derived from https://www.freebsd.org/doc/en/books/handbook/jails-ezjail.html
+
+- name: install jail management packages
+  pkgng: name=ezjail,jailme state=present
+
+- name: create jaildir
+  file: name={{jaildir}} state=directory
+
+# as advised in the jails handbook: make a second loopback interface for use in jails
+- name: configure loopback interfaces
+  lineinfile: dest=/etc/rc.conf
+              backup=yes
+              regexp=^cloned_interfaces=
+              line='cloned_interfaces="${cloned_interfaces} lo1"'
+              state=present
+  register: updated_loopbacks
+
+- name: create loopback interfaces
+  command: service netif cloneup
+  when: updated_loopbacks|changed
+
+- name: enable ezjail service
+  service: name=ezjail enabled=yes
+
+- name: install ezjail.conf
+  template: src=ezjail.conf.j2
+            dest=/usr/local/etc/ezjail.conf
+            owner=root
+            group=wheel
+            mode=0755
+
+- name: install basejail
+  command: ezjail-admin install creates={{jaildir}}/basejail
+
+# note that our default assigned IP is e.g. lo1|127.0.1.1
+# according to the jails handbook, you should also add e.g. em0|10.0.2.101
+- name: create jails
+  command: ezjail-admin create {{item.1.name}} '{{(item.1.ipaddr|default("lo1|127.0.1."~(item.0+1)))}}' creates={{jaildir}}/{{item.1.name}}
+  # command: ezjail-admin create {{item.1.name}} '{{(item.1.ipaddr|default("lo1|127.0.1."~(item.0+1)))~","~ansible_default_ipv4.device~"|"~ansible_default_ipv4.address}}' creates=/opt/jails/{{item.1.name}}
+  # when: item.1.state|default('present') == 'present'
+  with_indexed_items: jails
+
+- name: get running jails
+  command: jls name
+  register: running-jails
+
+- name: start jails
+  command: ezjail-admin start {{item.name}}
+  # when: {{item.name|regex_replace('\W','_')}} 
+  with_items: jails 
+  ignore_errors: true
+
+- name: configure jail DNS
+  command: cp /etc/resolv.conf {{jaildir}}/{{item.name}}/etc creates={{jaildir}}/{{item.name}}/etc/resolv.conf
+  with_items: jails
+
+# sigh https://github.com/ansible/ansible-modules-extras/pull/131
+- name: bootstrap jail packages
+  command: pkg -j {{item[0].name|regex_replace('\W','_')}} install -y {{item[1]}}
+  with_nested:
+    - jails
+    - ['pkg', 'bash', 'python27']
+
+# this makes the jails listed in inventory for subsequent provisioning
+- name: add jails to inventory
+  add_host: name={{item.name}} groups={{item.addhost}}
+            ansible_ssh_host={{item.name}}@{{webdevj1_ssh_host}}
+            ansible_python_interpreter=/usr/local/bin/python2.7
+            ansible_connection=sshjail
+  with_items: jails

@@ -1,0 +1,9 @@
+---
+# jailhost jails to be provisioned
+jails:
+  - name: web00
+    ipaddr: lo1|127.0.1.1,em0|10.0.5.20
+    addhost: webserverjails
+  - name: web01
+    ipaddr: lo1|127.0.1.2,em0|10.0.5.21
+    addhost: webserverjails

@@ -2,7 +2,7 @@
 
 ## webdevf1 bootstrap tooling
 
-- name: Install build tools
+- name: Install bootstrap tools
   yum: name=wget,unzip,zip,python,libselinux-python,git state=present
 
 - name: Install java build tools

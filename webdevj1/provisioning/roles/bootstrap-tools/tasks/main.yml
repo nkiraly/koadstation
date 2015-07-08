@@ -1,0 +1,6 @@
+---
+
+## webdevj1 bootstrap tooling
+
+- name: Install bootstrap tools
+  yum: name=wget,unzip,zip,python,libselinux-python,git state=present
