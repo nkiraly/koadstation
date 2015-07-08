@@ -28,7 +28,18 @@ And then you can SSH to the jailhost VM with:
 $ vagrant ssh jailhost
 ```
 
-For examples of how the networking comes together, to browse to the webservers you browse to the jail IPs defined in jails.yml.
+For examples of how the networking comes together, to hit a webserver jail you would browse to the jails IP as defined in jails.yml. e.g. http://10.0.5.21/
 
-http://10.0.5.20/
-http://10.0.5.21/
+```bash
+nc -v -z 10.0.5.31 6379
+```
+
+Similarly, to talk to the redis jail you would talk to its IP on 
+
+```bash
+nc -v -z 10.0.5.31 6379
+
+redis-cli -h 10.0.5.31 -n 0
+redis 10.0.5.31:6379> ping
+PONG
+```
