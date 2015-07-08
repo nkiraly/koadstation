@@ -1,6 +1,6 @@
 ---
 
-## webdevf1 webserver configuration
+## webdevf1 webserver jail configuration
 
 - name: Install Apache Webserver 2.4
   pkgng: name=www/apache24 state=present

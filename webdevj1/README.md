@@ -22,8 +22,13 @@ With dependencies installed you can vagrant up the box:
 $ vagrant up
 ```
 
-And then SSH to the jailhost VM with:
+And then you can SSH to the jailhost VM with:
 
 ```bash
 $ vagrant ssh jailhost
 ```
+
+For examples of how the networking comes together, to browse to the webservers you browse to the jail IPs defined in jails.yml.
+
+http://10.0.5.20/
+http://10.0.5.21/

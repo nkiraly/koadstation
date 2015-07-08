@@ -1,0 +1,6 @@
+---
+
+## webdevf1 redis jail configuration
+
+- name: Install Redis 3.0
+  pkgng: name=databases/redis state=present

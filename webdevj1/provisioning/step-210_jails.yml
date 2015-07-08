@@ -1,6 +1,6 @@
 ---
 
-- name: webdevj1 Provisioning Step 210 - jailhost jails configuration
+- name: webdevj1 Provisioning Step 210 - jail configuration and provisioning
   hosts: all
   gather_facts: no
   sudo: yes
@@ -17,3 +17,9 @@
   sudo: yes
   gather_facts: False
   roles: [webserver-apache24]
+
+- name: provision redis jails
+  hosts: redisjails
+  sudo: yes
+  gather_facts: False
+  roles: [redis30]
