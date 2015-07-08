@@ -1,5 +1,10 @@
 ---
 # jailhost jails to be provisioned
+#
+# lo1 is cloned loopback 127.0.0.0/8, see provisioning jailhost role
+# em0 is NAT interface 10.0.2.0/24, see Vagrantfile
+# em1 is host only 10.0.5.0/24 network, see Vagrantfile JAILHOST_IP
+#
 jails:
   - name: web00
     ipaddr: lo1|127.0.1.21,em0|10.0.5.21
