@@ -7,19 +7,6 @@
 
 - name: create jaildir
   file: name={{jaildir}} state=directory
-  
-# as advised in the jails handbook: make a second loopback interface for use in jails
-- name: configure loopback interfaces
-  lineinfile: dest=/etc/rc.conf
-              backup=yes
-              regexp=^cloned_interfaces=
-              line='cloned_interfaces="${cloned_interfaces} lo1"'
-              state=present
-  register: updated_loopbacks
-
-- name: create loopback interfaces
-  command: service netif cloneup
-  when: updated_loopbacks|changed
 
 - name: enable ezjail service
   service: name=ezjail enabled=yes
@@ -34,8 +21,8 @@
 - name: install basejail
   command: ezjail-admin install creates={{jaildir}}/basejail
 
-# note that our default assigned IP is e.g. lo1|127.0.2.1
-# according to the jails handbook, you should also add e.g. em0|10.0.2.101
+# note that our default assigned IP is the em0 NAT address   10.0.2.0/24 e.g. em0|10.0.2.21
+# but the jails are addressed by their em1 host-only address 10.0.5.0/24 e.g. em1|10.0.5.21
 - name: create jails
   command: ezjail-admin create {{item.1.name}} '{{item.1.ipaddr}}' creates={{jaildir}}/{{item.1.name}}
   when: item.1.state|default('present') == 'present'

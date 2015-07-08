@@ -31,7 +31,7 @@ $ vagrant ssh jailhost
 For examples of how the networking comes together, to hit a webserver jail you would browse to the jails IP as defined in jails.yml. e.g. http://10.0.5.21/
 
 ```bash
-nc -v -z 10.0.2.31 6379
+nc -v -z 10.0.2.21 80
 ```
 
 Similarly, to talk to the redis jail you would talk to its IP on 
