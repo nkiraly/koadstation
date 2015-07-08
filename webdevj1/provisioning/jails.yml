@@ -7,14 +7,14 @@
 #
 jails:
   - name: web00
-    ipaddr: lo1|127.0.1.21,em0|10.0.5.21
+    ipaddr: lo1|127.0.2.21,em0|10.0.2.21
     addhost: webserverjails
   - name: web01
-    ipaddr: lo1|127.0.1.22,em0|10.0.5.22
+    ipaddr: lo1|127.0.2.22,em0|10.0.2.22
     addhost: webserverjails
   - name: redis00
-    ipaddr: lo1|127.0.1.31,em0|10.0.5.31
+    ipaddr: lo1|127.0.2.31,em0|10.0.2.31
     addhost: redisjails
   - name: redis01
-    ipaddr: lo1|127.0.1.32,em0|10.0.5.32
+    ipaddr: lo1|127.0.2.32,em0|10.0.2.32
     addhost: redisjails

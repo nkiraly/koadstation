@@ -31,15 +31,30 @@ $ vagrant ssh jailhost
 For examples of how the networking comes together, to hit a webserver jail you would browse to the jails IP as defined in jails.yml. e.g. http://10.0.5.21/
 
 ```bash
-nc -v -z 10.0.5.31 6379
+nc -v -z 10.0.2.31 6379
 ```
 
 Similarly, to talk to the redis jail you would talk to its IP on 
 
 ```bash
-nc -v -z 10.0.5.31 6379
+nc -v -z 10.0.2.31 6379
 
-redis-cli -h 10.0.5.31 -n 0
+redis-cli -h 10.0.2.31 -n 0
 redis 10.0.5.31:6379> ping
 PONG
 ```
+
+
+# Frequently Asked Questions
+
+Q: When developing jails for my purposes, do I need to provision the jailhost from scratch every time?
+A: No, jail provisioning is designed to be efficiently reentrant. To start from scratch for a specific jail, delete your mal-performing jail with:
+
+```bash
+vagrant ssh jailhost
+sudo service ezjail stop redis00
+sudo ezjail-admin delete redis00
+sudo rm -rf /opt/jails/redis00
+```
+
+Replace redis00 with the name of the jail you want to be re-provisioned from scratch and then `vagrant provision` again from your vagrant host.

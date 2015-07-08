@@ -4,3 +4,6 @@
 
 - name: Install Apache Webserver 2.4
   pkgng: name=www/apache24 state=present
+
+- name: Enable and start apache24 service
+  service: name=apache24 enabled=yes state=started

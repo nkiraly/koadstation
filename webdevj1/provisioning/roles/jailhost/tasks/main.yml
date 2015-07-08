@@ -7,7 +7,7 @@
 
 - name: create jaildir
   file: name={{jaildir}} state=directory
-
+  
 # as advised in the jails handbook: make a second loopback interface for use in jails
 - name: configure loopback interfaces
   lineinfile: dest=/etc/rc.conf
@@ -34,13 +34,25 @@
 - name: install basejail
   command: ezjail-admin install creates={{jaildir}}/basejail
 
-# note that our default assigned IP is e.g. lo1|127.0.1.1
+# note that our default assigned IP is e.g. lo1|127.0.2.1
 # according to the jails handbook, you should also add e.g. em0|10.0.2.101
 - name: create jails
-  command: ezjail-admin create {{item.1.name}} '{{(item.1.ipaddr|default("lo1|127.0.1."~(item.0+1)))}}' creates={{jaildir}}/{{item.1.name}}
-  # command: ezjail-admin create {{item.1.name}} '{{(item.1.ipaddr|default("lo1|127.0.1."~(item.0+1)))~","~ansible_default_ipv4.device~"|"~ansible_default_ipv4.address}}' creates=/opt/jails/{{item.1.name}}
-  # when: item.1.state|default('present') == 'present'
+  command: ezjail-admin create {{item.1.name}} '{{item.1.ipaddr}}' creates={{jaildir}}/{{item.1.name}}
+  when: item.1.state|default('present') == 'present'
   with_indexed_items: jails
+
+- name: configure jail DNS
+  command: cp /etc/resolv.conf {{jaildir}}/{{item.name}}/etc creates={{jaildir}}/{{item.name}}/etc/resolv.conf
+  with_items: jails
+
+- name: install base jail rc.conf
+  # template only makes the file from the jinja template when it does not already exist
+  template: src=rc.conf.j2
+            dest={{jaildir}}/{{item.name}}/etc/rc.conf
+            owner=root
+            group=wheel
+            mode=0655
+  with_items: jails
 
 - name: get running jails
   command: jls name
@@ -48,22 +60,17 @@
 
 - name: start jails
   command: ezjail-admin start {{item.name}}
-  # when: {{item.name|regex_replace('\W','_')}} 
-  with_items: jails 
-  ignore_errors: true
-
-- name: configure jail DNS
-  command: cp /etc/resolv.conf {{jaildir}}/{{item.name}}/etc creates={{jaildir}}/{{item.name}}/etc/resolv.conf
   with_items: jails
+  ignore_errors: true
 
 # sigh https://github.com/ansible/ansible-modules-extras/pull/131
 - name: bootstrap jail packages
   command: pkg -j {{item[0].name|regex_replace('\W','_')}} install -y {{item[1]}}
   with_nested:
     - jails
-    - ['pkg', 'bash', 'python27']
+    - ['ports-mgmt/pkg', 'shells/bash', 'lang/python27']
 
-# this makes the jails listed in inventory for subsequent provisioning
+# this creates the in inventory for subsequent provisioning steps to refer to the jails by their addhost group
 - name: add jails to inventory
   add_host: name={{item.name}} groups={{item.addhost}}
             ansible_ssh_host={{item.name}}@{{webdevj1_ssh_host}}

@@ -16,6 +16,8 @@ Vagrant.configure('2') do |config|
     jailhost.vm.box = 'arkadi/freebsd-10.1-amd64'
     jailhost.vm.guest = :freebsd
 
+    # the jails made in this VM are bound to loopback lo1 and em0 NAT interface
+    # see provisioning/jails.yml
     jailhost.vm.network 'private_network', ip: JAILHOST_IP
 
     jailhost.vm.network 'forwarded_port', guest: 22, host: JAILHOST_SSH, id: 'ssh'
