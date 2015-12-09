@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-echo "webdevf1 Provisioning Step 010 - freebsdweb - pkg update and ansible"
+echo "dbdevf2 Provisioning Step 010 - bootstrap ansible"
 
 ansible=`which ansible-playbook 2>/dev/null`
 

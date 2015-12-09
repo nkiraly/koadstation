@@ -7,6 +7,7 @@ koadstation is a collection of development environments, and servers that I use 
 - tiledraweru14 - Ubuntu 14.04 LTS map tile server
 - webdevf1 - FreeBSD 10.1 web development environment
 - webdevj1 - FreeBSD 10.1 jailed web development environment, uses [ansible-sshjail](https://github.com/austinhyde/ansible-sshjail) to streamline ansible interactions
+- dbdevf2 - FreeBSD 10.2 database development environment
 
 
 # Frequently Asked Questions
