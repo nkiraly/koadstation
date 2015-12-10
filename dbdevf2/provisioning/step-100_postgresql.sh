@@ -13,7 +13,7 @@ $ansible all \
   -i 'localhost,' \
   -c local \
   -m pkgng \
-  -a "name=postgresql94-server
+  -a "name=postgresql94-server,postgresql94-contrib
       state=present"
 
 # enable postgresql
