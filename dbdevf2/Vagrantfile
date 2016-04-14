@@ -1,4 +1,5 @@
 # dbdevf2 is a koadstation FreeBSD 10.2 database development environment
+# installs PostgreSQL 9.4
 
 require 'rbconfig'
 
