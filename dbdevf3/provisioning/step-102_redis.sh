@@ -24,6 +24,16 @@ $ansible all \
   -a "name=redis
       enabled=yes"
 
+# specify redis password
+$ansible all \
+  -i 'localhost,' \
+  -c local \
+  -m lineinfile \
+  -a "dest=/usr/local/etc/redis.conf
+      regexp=^requirepass\s+
+      line='requirepass janeyg1'
+      state=present"
+
 # start redis
 $ansible all \
   -i 'localhost,' \
