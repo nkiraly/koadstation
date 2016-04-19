@@ -24,27 +24,6 @@ $ansible all \
   -a "name=mysql-server
       enabled=yes"
 
-# create mysql data directory
-$ansible all \
-  -i 'localhost,' \
-  -c local \
-  -m file \
-  -a "path=/opt/db/mysql/data
-      state=directory
-      owner=mysql
-      group=mysql
-      mode=0700"
-
-# set mysql data directory in rc.conf
-$ansible all \
-  -i 'localhost,' \
-  -c local \
-  -m lineinfile \
-  -a "dest=/etc/rc.conf
-      regexp=^mysql_dbdir=
-      line='mysql_dbdir=\"/opt/db/mysql/data\"'
-      state=present"
-
 # start mysql
 $ansible all \
   -i 'localhost,' \
@@ -52,3 +31,6 @@ $ansible all \
   -m service \
   -a "name=mysql-server
       state=started"
+
+# echo provisioned password to console
+cat /root/.mysql_secret

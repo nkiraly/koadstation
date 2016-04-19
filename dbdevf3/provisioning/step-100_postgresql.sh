@@ -24,27 +24,6 @@ $ansible all \
   -a "name=postgresql
       enabled=yes"
 
-# create postgresql data directory
-$ansible all \
-  -i 'localhost,' \
-  -c local \
-  -m file \
-  -a "path=/opt/db/pgsql/data
-      state=directory
-      owner=pgsql
-      group=pgsql
-      mode=0700"
-
-# set postgresql data directory in rc.conf
-$ansible all \
-  -i 'localhost,' \
-  -c local \
-  -m lineinfile \
-  -a "dest=/etc/rc.conf
-      regexp=^postgresql_data=
-      line='postgresql_data=\"/opt/db/pgsql/data\"'
-      state=present"
-
 # set postgresql initdb flags in rc.conf
 $ansible all \
   -i 'localhost,' \
