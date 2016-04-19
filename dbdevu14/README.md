@@ -1,3 +1,3 @@
-# What is dbdevf3 ?
+# What is dbdevu14 ?
 
-dbdevf3 is a FreeBSD 10.3 database development environment. It provisions common database servers and extensions.
+dbdevu14 is an Ubuntu 14 database development environment. It provisions common database servers and extensions.

@@ -24,6 +24,8 @@ $ansible all \
   -a "name=postgresql
       enabled=yes"
 
+# vi /etc/postgresql/9.5/main/pg_hba.conf
+
 # start postgresql
 $ansible all \
   -i 'localhost,' \

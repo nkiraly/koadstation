@@ -21,6 +21,7 @@ if [[ -z $ansible ]]; then
   #wget --quiet -O mysql-apt-config_0.7.2-1_all.deb http://dev.mysql.com/get/mysql-apt-config_0.7.2-1_all.deb
   #sudo dpkg -i mysql-apt-config_0.7.2-1_all.deb
 
+  # install latest redis
   sudo echo "deb http://packages.dotdeb.org squeeze all" >  /etc/apt/sources.list.d/dotdeb.org.list
   sudo echo "deb-src http://packages.dotdeb.org squeeze all"  >> /etc/apt/sources.list.d/dotdeb.org.list
   wget -q -O - http://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -
@@ -30,6 +31,10 @@ if [[ -z $ansible ]]; then
   sudo apt-get -q -y upgrade
 
   sudo apt-get -q -y install git curl htop vim ansible
+
+  # need libhiredis for redis_fdw build
+  sudo apt-get -q -y install libhiredis-dev
+
   hash -r
   ansible=`which ansible-playbook 2>/dev/null`
 fi
