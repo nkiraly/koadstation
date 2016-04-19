@@ -55,6 +55,9 @@ Vagrant.configure('2') do |config|
 
     # provision step 101 - mysql
     freebsddb.vm.provision 'shell', path: 'provisioning/step-101_mysql.sh', privileged: true
+
+    # provision step 102 - redis
+    freebsddb.vm.provision 'shell', path: 'provisioning/step-102_redis.sh', privileged: true
   end
 
 end
