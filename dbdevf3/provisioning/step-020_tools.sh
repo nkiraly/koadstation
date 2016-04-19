@@ -13,4 +13,4 @@ $ansible all \
   -i 'localhost,' \
   -c local \
   -m pkgng \
-  -a "name=git,unzip,zip state=present"
+  -a "name=git,hiredis,unzip,zip state=present"
