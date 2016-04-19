@@ -39,7 +39,8 @@ $ansible all \
   -i 'localhost,' \
   -c local \
   -m command \
-  -a "/usr/local/etc/rc.d/postgresql initdb"
+  -a "/usr/local/etc/rc.d/postgresql initdb
+      creates=/usr/local/pgsql/data/postgresql.conf"
 
 # start postgresql
 $ansible all \
