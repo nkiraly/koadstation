@@ -32,8 +32,14 @@ if [[ -z $ansible ]]; then
 
   sudo apt-get -q -y install git curl htop vim ansible
 
+  # need pip for gspreadsheet build
+  sudo apt-get -q -y install python-pip
+
   # need libhiredis for redis_fdw build
   sudo apt-get -q -y install libhiredis-dev
+
+  # need libyaj for json_fdw
+  sudo apt-get -q -y install zlib1g-dev libyajl-dev
 
   hash -r
   ansible=`which ansible-playbook 2>/dev/null`
